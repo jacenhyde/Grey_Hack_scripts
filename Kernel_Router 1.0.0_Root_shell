@@ -1,0 +1,27 @@
+////This is a code for the game Grey Hack using the language greyscript
+// Aptclient     add_repo (string repository_address, int port = 1542)
+
+//[Parameters]
+//[1] string repository_address
+//[2] [opt] int port = 1542
+
+//[Description]
+//Add the repository address in the /etc/apt/sources.txt file
+
+if params.len != 1 or params[0] == "-h" or params[0] == "--help" then exit("<b>Usage: "+program_path.split("/")[-1]+" [ip_address]</b>")
+metaxploit = include_lib("/lib/metaxploit.so")
+if not metaxploit then
+    metaxploit = include_lib(current_path + "/metaxploit.so")
+end if
+if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
+address = params[0]
+net_session = metaxploit.net_use( address )
+if not net_session then exit("Error: can't connect to net session")
+metaLib = net_session.dump_lib
+result = metaLib.overflow("0x47CF4230", "edistenertypelembofitextobjec")
+if not result then exit("Program ended")
+if typeof(result) == "shell" then
+	result.start_terminal
+else
+	print("Error: expected shell, obtained: " + result)
+end if
